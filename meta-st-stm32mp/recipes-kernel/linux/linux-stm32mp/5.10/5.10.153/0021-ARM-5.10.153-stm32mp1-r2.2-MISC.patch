@@ -1,0 +1,32 @@
+From 916290ce67bf3b8bcfb31ea0edcefaa08df01500 Mon Sep 17 00:00:00 2001
+From: Romuald JEANNE <romuald.jeanne@st.com>
+Date: Fri, 18 Nov 2022 16:30:45 +0100
+Subject: [PATCH 21/23] ARM 5.10.153-stm32mp1-r2.2 MISC
+
+Signed-off-by: Romuald JEANNE <romuald.jeanne@st.com>
+---
+ drivers/opp/core.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index 7ed605ffb717..06f808e276fb 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -1608,9 +1608,13 @@ struct opp_table *dev_pm_opp_set_supported_hw(struct device *dev,
+ 	struct opp_table *opp_table;
+ 
+ 	opp_table = dev_pm_opp_get_opp_table(dev);
+-	if (IS_ERR(opp_table))
++
++	if (PTR_ERR(opp_table) == -EPROBE_DEFER)
+ 		return opp_table;
+ 
++	if (!opp_table)
++		return ERR_PTR(-ENOMEM);
++
+ 	/* Make sure there are no concurrent readers while updating opp_table */
+ 	WARN_ON(!list_empty(&opp_table->opp_list));
+ 
+-- 
+2.17.1
+
